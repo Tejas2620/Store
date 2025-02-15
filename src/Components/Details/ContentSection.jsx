@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { typography } from '../../styles/typography';
+import { typography } from "../../styles/typography";
 
 export const ContentSection = ({ product, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -53,11 +53,11 @@ export const ContentSection = ({ product, onDelete }) => {
                 delay: 0.1 * index,
                 duration: 0.3,
                 type: "spring",
-                stiffness: 300
+                stiffness: 300,
               }}
               whileHover={{
                 scale: 1.02,
-                transition: { duration: 0.2 }
+                transition: { duration: 0.2 },
               }}
               className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl hover:shadow-md transition-shadow duration-300"
             >
@@ -170,12 +170,14 @@ export const ContentSection = ({ product, onDelete }) => {
                     />
                   </svg>
                 </div>
-                <h3 className={`${typography.heading3} text-center text-gray-900 mb-2`}>
+                <h3
+                  className={`${typography.heading3} text-center text-gray-900 mb-2`}
+                >
                   Delete Product
                 </h3>
                 <p className={`${typography.body1} text-center text-gray-600`}>
-                  Are you sure you want to delete this product? This action cannot
-                  be undone.
+                  Are you sure you want to delete this product? This action
+                  cannot be undone.
                 </p>
               </div>
               <div className="flex gap-4">
