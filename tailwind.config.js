@@ -21,6 +21,8 @@ module.exports = {
         'drip': 'drip 2s ease-in-out infinite',
       },
       fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Poppins', 'system-ui', 'sans-serif'],
         marker: ['Permanent Marker', 'cursive'],
       },
     },
