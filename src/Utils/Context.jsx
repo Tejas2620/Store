@@ -16,8 +16,12 @@ export const ProductProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
+    const savedProducts = localStorage.getItem("products");
+    if (!savedProducts) {
+      setProducts(mockData);
+      localStorage.setItem("products", JSON.stringify(mockData));
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));

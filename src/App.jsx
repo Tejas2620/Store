@@ -21,13 +21,14 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Initial loading animation
+    // Force reset products on initial load
+    resetToMockProducts();
+
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
-  }, []);
+  }, [resetToMockProducts]);
 
   useEffect(() => {
     // Check if stored products have any unwanted categories
