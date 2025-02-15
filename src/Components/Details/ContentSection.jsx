@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { typography } from "../../styles/typography";
+import { WishlistButton } from "../Common/WishlistButton";
 
 export const ContentSection = ({ product, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -25,10 +26,12 @@ export const ContentSection = ({ product, onDelete }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className={`${typography.body1} text-gray-600`}
+          className={`${typography.body1} text-gray-600 mb-4`}
         >
           {product.description}
         </motion.p>
+
+        <WishlistButton product={product} showText={true} />
       </div>
 
       {/* Specifications */}

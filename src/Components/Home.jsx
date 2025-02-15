@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Sidebar } from "./Sidebar/Sidebar";
 import { ProductGrid } from "./Products/ProductGrid";
@@ -6,6 +6,7 @@ import { useProductFilters } from "../hooks/useProductFilters";
 import { SEO } from "./SEO";
 import { typography } from "../styles/typography";
 import { LoadingScreen } from "./LoadingScreen";
+import { Link } from "react-router-dom";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,6 +45,11 @@ function Home() {
     loading,
   } = useProductFilters();
 
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    const saved = localStorage.getItem("recentlyViewed");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   if (loading) return <LoadingScreen />;
 
   return (
@@ -73,6 +79,8 @@ function Home() {
                 onCategoryClick={handleCategoryClick}
                 searchQuery={searchQuery}
                 onSearch={handleSearch}
+                sortBy={sortBy}
+                onSort={handleSort}
               />
             </motion.div>
 
@@ -86,25 +94,52 @@ function Home() {
                     ? "All Sneakers"
                     : `${selectedCategory} Collection`}
                 </motion.h1>
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <select
-                    value={sortBy}
-                    onChange={handleSort}
-                    className={`${typography.body2} px-4 py-2 rounded-xl border border-gray-200 bg-white/80 backdrop-blur-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none`}
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="priceAsc">Price: Low to High</option>
-                    <option value="priceDesc">Price: High to Low</option>
-                    <option value="nameAsc">Name: A to Z</option>
-                    <option value="nameDesc">Name: Z to A</option>
-                  </select>
-                </motion.div>
               </div>
+
+              {/* Recently Viewed Section */}
+              {recentlyViewed.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-8 bg-white/50 backdrop-blur-sm rounded-2xl p-6"
+                >
+                  <h2 className={`${typography.heading3} text-gray-800 mb-4`}>
+                    Recently Viewed
+                  </h2>
+                  <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                    {recentlyViewed.map((product) => (
+                      <motion.div
+                        key={product.id}
+                        whileHover={{ y: -5 }}
+                        className="flex-shrink-0 w-48"
+                      >
+                        <Link
+                          to={`/details/${product.id}`}
+                          className="block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
+                        >
+                          <div className="h-32 overflow-hidden">
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="p-3">
+                            <h3
+                              className={`${typography.subtitle2} text-gray-800 line-clamp-1`}
+                            >
+                              {product.name}
+                            </h3>
+                            <p className={`${typography.price} text-blue-600`}>
+                              ${product.price}
+                            </p>
+                          </div>
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
 
               {/* Products Grid */}
               <ProductGrid products={filteredProducts} />

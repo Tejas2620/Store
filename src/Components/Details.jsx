@@ -33,6 +33,15 @@ function Details() {
       );
       if (foundProduct) {
         setProduct(foundProduct);
+        // Update recently viewed products
+        const recentlyViewed = JSON.parse(
+          localStorage.getItem("recentlyViewed") || "[]"
+        );
+        const updatedRecent = [
+          foundProduct,
+          ...recentlyViewed.filter((p) => p.id !== foundProduct.id),
+        ].slice(0, 4); // Keep only last 4 items
+        localStorage.setItem("recentlyViewed", JSON.stringify(updatedRecent));
       } else {
         navigate("/");
       }

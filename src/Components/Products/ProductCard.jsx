@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { WishlistButton } from "../WishlistButton";
+import { WishlistButton } from "../Common/WishlistButton";
 
 export const ProductCard = ({ product }) => {
   const [hoveredCard, setHoveredCard] = useState(false);
@@ -36,7 +36,6 @@ export const ProductCard = ({ product }) => {
             New
           </div>
         )}
-        <WishlistButton productId={product.id} />
       </Link>
 
       <div className="p-4 flex flex-col flex-grow">
@@ -58,6 +57,10 @@ export const ProductCard = ({ product }) => {
             {product.inStock ? "In Stock" : "Out of Stock"}
           </span>
         </div>
+      </div>
+
+      <div className="absolute top-4 right-4 z-10">
+        <WishlistButton product={product} showText={false} />
       </div>
     </motion.div>
   );
