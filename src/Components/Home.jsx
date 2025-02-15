@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Sidebar } from "./Sidebar/Sidebar";
-import { ProductGrid } from "./Products/ProductGrid";
+import { ProductCard } from "./ProductCard";
 import { useProductFilters } from "../hooks/useProductFilters";
 import { SEO } from "./SEO";
-import { typography } from "../styles/typography";
 import { LoadingScreen } from "./LoadingScreen";
-import { Link } from "react-router-dom";
+import { typography } from "../styles/typography";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -14,20 +13,6 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      when: "beforeChildren",
-    },
-  },
-};
-
-const childVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 24,
     },
   },
 };
@@ -45,11 +30,6 @@ function Home() {
     loading,
   } = useProductFilters();
 
-  const [recentlyViewed, setRecentlyViewed] = useState(() => {
-    const saved = localStorage.getItem("recentlyViewed");
-    return saved ? JSON.parse(saved) : [];
-  });
-
   if (loading) return <LoadingScreen />;
 
   return (
@@ -61,88 +41,53 @@ function Home() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="max-w-[1600px] mx-auto p-6">
+        <div className="container mx-auto px-4 py-8">
+          {/* Hero Section */}
           <motion.div
-            className="flex flex-col md:flex-row gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+            className="text-center mb-12"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
           >
-            {/* Sidebar */}
-            <motion.div
-              variants={childVariants}
-              className="w-full md:w-72 shrink-0"
+            <h1
+              className={`${typography.heading1} text-6xl font-black mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent`}
             >
-              <Sidebar
-                categories={categories}
-                selectedCategory={selectedCategory}
-                onCategoryClick={handleCategoryClick}
-                searchQuery={searchQuery}
-                onSearch={handleSearch}
-                sortBy={sortBy}
-                onSort={handleSort}
-              />
-            </motion.div>
+              Premium Sneaker Collection
+            </h1>
+            <p
+              className={`${typography.subtitle1} text-gray-600 max-w-2xl mx-auto leading-relaxed`}
+            >
+              Discover our curated selection of exclusive sneakers, featuring
+              the latest designs and timeless classics.
+            </p>
+          </motion.div>
 
-            {/* Main Content */}
-            <motion.div variants={childVariants} className="flex-1">
-              <div className="flex justify-between items-center mb-6">
-                <motion.h1
-                  className={`${typography.heading2} bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent`}
-                >
-                  {selectedCategory === "All"
-                    ? "All Sneakers"
-                    : `${selectedCategory} Collection`}
-                </motion.h1>
-              </div>
+          <div className="flex flex-col lg:flex-row gap-8">
+            <Sidebar
+              selectedCategory={selectedCategory}
+              onCategoryClick={handleCategoryClick}
+              categories={categories}
+              sortBy={sortBy}
+              onSort={handleSort}
+              searchQuery={searchQuery}
+              onSearch={handleSearch}
+            />
 
-              {/* Recently Viewed Section */}
-              {recentlyViewed.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-8 bg-white/50 backdrop-blur-sm rounded-2xl p-6"
-                >
-                  <h2 className={`${typography.heading3} text-gray-800 mb-4`}>
-                    Recently Viewed
-                  </h2>
-                  <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-                    {recentlyViewed.map((product) => (
-                      <motion.div
-                        key={product.id}
-                        whileHover={{ y: -5 }}
-                        className="flex-shrink-0 w-48"
-                      >
-                        <Link
-                          to={`/details/${product.id}`}
-                          className="block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
-                        >
-                          <div className="h-32 overflow-hidden">
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
-                            />
-                          </div>
-                          <div className="p-3">
-                            <h3
-                              className={`${typography.subtitle2} text-gray-800 line-clamp-1`}
-                            >
-                              {product.name}
-                            </h3>
-                            <p className={`${typography.price} text-blue-600`}>
-                              ${product.price}
-                            </p>
-                          </div>
-                        </Link>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Products Grid */}
-              <ProductGrid products={filteredProducts} />
+            <motion.div
+              className="flex-1"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {/* Product Grid */}
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                variants={containerVariants}
+              >
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </motion.div>
 
               {/* No Results Message */}
               {filteredProducts.length === 0 && (
@@ -161,7 +106,7 @@ function Home() {
                 </motion.div>
               )}
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </motion.div>
     </>
