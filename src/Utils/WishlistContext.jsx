@@ -15,29 +15,26 @@ export const WishlistProvider = ({ children }) => {
   }, [wishlist]);
 
   const addToWishlist = (product) => {
-    setWishlist(prev => {
-      if (!prev.some(item => item.id === product.id)) {
-        return [...prev, product];
-      }
-      return prev;
-    });
+    setWishlist([...wishlist, product]);
   };
 
   const removeFromWishlist = (productId) => {
-    setWishlist(prev => prev.filter(item => item.id !== productId));
+    setWishlist(wishlist.filter((item) => item.id !== productId));
   };
 
   const isInWishlist = (productId) => {
-    return wishlist.some(item => item.id === productId);
+    return wishlist.some((item) => item.id === productId);
   };
 
   return (
-    <WishlistContext.Provider value={{
-      wishlist,
-      addToWishlist,
-      removeFromWishlist,
-      isInWishlist
-    }}>
+    <WishlistContext.Provider
+      value={{
+        wishlist,
+        addToWishlist,
+        removeFromWishlist,
+        isInWishlist,
+      }}
+    >
       {children}
     </WishlistContext.Provider>
   );

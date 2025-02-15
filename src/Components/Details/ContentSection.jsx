@@ -1,215 +1,191 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
+import { motion } from "framer-motion";
+import { ProductContext } from "../../Utils/Context";
+import { WishlistContext } from "../../Utils/WishlistContext";
 import { typography } from "../../styles/typography";
-import { WishlistButton } from "../Common/WishlistButton";
 
-export const ContentSection = ({ product, onDelete }) => {
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+export const ContentSection = ({
+  product,
+  selectedSize,
+  setSelectedSize,
+  showSizeError,
+  setShowSizeError,
+  quantity,
+  setQuantity,
+  onAddToCart,
+}) => {
+  const { addToCart } = useContext(ProductContext);
+  const { addToWishlist, removeFromWishlist, isInWishlist } =
+    useContext(WishlistContext);
 
-  const handleDelete = () => {
-    onDelete();
-    setShowDeleteModal(false);
+  const specifications = [
+    { label: "Brand", value: product.brand || "Nike" },
+    { label: "Model", value: product.name?.split(" ")[0] || "Air Jordan" },
+    { label: "Colorway", value: product.color || "Classic" },
+    { label: "Material", value: "Premium Leather" },
+    { label: "Style", value: product.category || "Athletic" },
+    { label: "Stock", value: `${product.stockQuantity} available` },
+  ];
+
+  const containerAnimation = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { duration: 0.6, staggerChildren: 0.1 },
+  };
+
+  const itemAnimation = {
+    initial: { opacity: 0, y: 20 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.4, 0, 0.2, 1],
+      },
+    },
   };
 
   return (
-    <div className="p-8 md:p-12 flex flex-col md:w-1/2 h-full overflow-y-auto">
-      <div className="mb-8">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`${typography.heading1} bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-4`}
-        >
-          {product.name}
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className={`${typography.body1} text-gray-600 mb-4`}
-        >
-          {product.description}
-        </motion.p>
-
-        <WishlistButton product={product} showText={true} />
-      </div>
-
-      {/* Specifications */}
+    <motion.div className="h-full flex flex-col" {...containerAnimation}>
+      {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mb-8"
+        className="mb-6"
       >
-        <motion.h2
-          className={`${typography.heading3} bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6`}
+        <h1
+          className={`${typography.heading1} text-2xl md:text-3xl font-bold text-gray-900 mb-2`}
         >
+          {product.name}
+        </h1>
+        <div className="flex items-center gap-4">
+          <span className="text-2xl font-bold text-blue-600">
+            ${product.price}
+          </span>
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-medium ${
+              product.inStock
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
+            {product.inStock ? "In Stock" : "Out of Stock"}
+          </span>
+        </div>
+      </motion.div>
+
+      {/* Description */}
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`${typography.body1} text-gray-600 mb-6`}
+      >
+        {product.description}
+      </motion.p>
+
+      {/* Specifications */}
+      <motion.div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Specifications
-        </motion.h2>
+        </h2>
         <div className="grid grid-cols-2 gap-4">
-          {Object.entries(product.specifications).map(([key, value], index) => (
+          {specifications.map((spec, index) => (
             <motion.div
-              key={key}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              key={spec.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
-                delay: 0.1 * index,
-                duration: 0.3,
-                type: "spring",
-                stiffness: 300,
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: [0.4, 0, 0.2, 1],
               }}
               whileHover={{
-                scale: 1.02,
+                scale: 1.03,
                 transition: { duration: 0.2 },
               }}
-              className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl hover:shadow-md transition-shadow duration-300"
+              className="bg-gray-50 rounded-lg p-4 hover:shadow-lg hover:bg-white transition-all duration-300"
             >
-              <motion.p className={`${typography.caption} text-blue-600 mb-1`}>
-                {key}
-              </motion.p>
-              <motion.p className={`${typography.subtitle2} text-gray-900`}>
-                {value}
-              </motion.p>
+              <div className="flex flex-col">
+                <span className="text-sm text-gray-500 mb-1">{spec.label}</span>
+                <span className="font-medium text-gray-900">{spec.value}</span>
+              </div>
             </motion.div>
           ))}
         </div>
       </motion.div>
 
-      {/* Action Buttons */}
-      <motion.div
-        className="mt-auto flex gap-4 pt-8 border-t border-gray-100"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <Link
-          to="/"
-          className={`${typography.button} group relative flex-1 px-6 py-3.5 rounded-xl
-            bg-gradient-to-r from-gray-100 to-gray-200
-            text-gray-700 transition-all duration-300 shadow-sm hover:shadow-md
-            flex items-center justify-center gap-3 overflow-hidden`}
-        >
-          <motion.span
-            className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300
-              opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          />
-          <svg
-            className="w-5 h-5 relative z-10 transition-transform duration-300
-              transform group-hover:-translate-x-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          <span className="relative z-10">Back to Home</span>
-        </Link>
-
-        <motion.button
-          onClick={() => setShowDeleteModal(true)}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={`${typography.button} group relative flex-1 px-6 py-3.5 rounded-xl
-            bg-gradient-to-r from-red-500 to-red-600 text-white
-            transition-all duration-300 shadow-sm hover:shadow-md
-            flex items-center justify-center gap-3 overflow-hidden`}
-        >
-          <motion.span
-            className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-700
-              opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          />
-          <svg
-            className="w-5 h-5 relative z-10 transition-transform duration-300
-              transform group-hover:rotate-12"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
-          <span className="relative z-10">Delete Product</span>
-        </motion.button>
+      {/* Additional Features */}
+      <motion.div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Features</h2>
+        <ul className="space-y-3">
+          {[
+            `Authentic ${product.brand} ${product.category}`,
+            `Premium ${product.material} construction`,
+            `${product.color} colorway`,
+            product.features &&
+              Object.entries(product.features).map(
+                ([key, value]) => `${value}`
+              ),
+          ]
+            .flat()
+            .filter(Boolean)
+            .map((feature, index) => (
+              <motion.li
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 + index * 0.1 }}
+                className="flex items-center gap-3 text-gray-700"
+              >
+                <svg
+                  className="w-5 h-5 text-blue-600 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                {feature}
+              </motion.li>
+            ))}
+        </ul>
       </motion.div>
 
-      {/* Delete Confirmation Modal */}
-      <AnimatePresence>
-        {showDeleteModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white rounded-xl p-8 max-w-md w-full shadow-xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mb-6">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-red-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                    />
-                  </svg>
-                </div>
-                <h3
-                  className={`${typography.heading3} text-center text-gray-900 mb-2`}
-                >
-                  Delete Product
-                </h3>
-                <p className={`${typography.body1} text-center text-gray-600`}>
-                  Are you sure you want to delete this product? This action
-                  cannot be undone.
-                </p>
-              </div>
-              <div className="flex gap-4">
-                <motion.button
-                  onClick={() => setShowDeleteModal(false)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`${typography.button} flex-1 px-6 py-3 rounded-xl
-                    border-2 border-gray-200 text-gray-700 hover:bg-gray-50
-                    transition-all duration-200 hover:shadow-md`}
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  onClick={handleDelete}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`${typography.button} flex-1 px-6 py-3 rounded-xl
-                    bg-gradient-to-r from-red-500 to-red-600 text-white
-                    hover:from-red-600 hover:to-red-700
-                    transition-all duration-200 hover:shadow-md`}
-                >
-                  Delete
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      {/* Action Buttons */}
+      <div className="mt-auto pt-6 border-t border-gray-100">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onAddToCart}
+          className="w-full py-3 px-6 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors mb-4"
+        >
+          Add to Cart
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() =>
+            isInWishlist(product.id)
+              ? removeFromWishlist(product.id)
+              : addToWishlist(product)
+          }
+          className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
+            isInWishlist(product.id)
+              ? "bg-red-50 text-red-600 hover:bg-red-100"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+        >
+          {isInWishlist(product.id)
+            ? "Remove from Wishlist"
+            : "Add to Wishlist"}
+        </motion.button>
+      </div>
+    </motion.div>
   );
 };

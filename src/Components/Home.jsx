@@ -6,6 +6,7 @@ import { useProductFilters } from "../hooks/useProductFilters";
 import { SEO } from "./SEO";
 import { LoadingScreen } from "./LoadingScreen";
 import { typography } from "../styles/typography";
+import { PageTransition } from "./PageTransition";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -33,14 +34,14 @@ function Home() {
   if (loading) return <LoadingScreen />;
 
   return (
-    <>
-      <SEO title="SneakPro | Premium Sneaker Collection" />
+    <PageTransition>
       <motion.div
-        className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 pt-20"
+        initial="initial"
+        animate="animate"
+        exit="exit"
       >
+        <SEO title="SneakPro | Premium Sneaker Collection" />
         <div className="container mx-auto px-4 py-8">
           {/* Hero Section */}
           <motion.div
@@ -109,7 +110,7 @@ function Home() {
           </div>
         </div>
       </motion.div>
-    </>
+    </PageTransition>
   );
 }
 

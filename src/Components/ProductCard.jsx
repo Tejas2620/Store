@@ -2,11 +2,27 @@ import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { WishlistContext } from "../Utils/WishlistContext";
+import { ProductContext } from "../Utils/Context";
 import { typography } from "../styles/typography";
 
 export const ProductCard = ({ product }) => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useContext(WishlistContext);
+  const { addToCart, cart } = useContext(ProductContext);
   const [isHovered, setIsHovered] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const itemInCart = cart.find(item => item.id === product.id);
+
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    setIsAdding(true);
+
+    // Simulate network request
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    addToCart(product);
+    setIsAdding(false);
+  };
 
   return (
     <motion.div
@@ -58,23 +74,61 @@ export const ProductCard = ({ product }) => {
             {product.description}
           </p>
 
-          {/* Category and Stock */}
+          {/* Category, Stock, and Add to Cart */}
           <div className="flex items-center justify-between">
-            <span className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
-              {product.category}
-            </span>
-            <span className={`px-3 py-1 rounded-full text-sm ${
-              product.inStock
-                ? 'bg-green-100 text-green-700'
-                : 'bg-red-100 text-red-700'
-            }`}>
-              {product.inStock ? 'In Stock' : 'Out of Stock'}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
+                {product.category}
+              </span>
+              <span className={`px-3 py-1 rounded-full text-sm ${
+                product.inStock
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-700'
+              }`}>
+                {product.inStock ? 'In Stock' : 'Out of Stock'}
+              </span>
+            </div>
           </div>
         </div>
       </Link>
 
-      {/* Wishlist Button - Remains in top right */}
+      {/* Action Buttons Container */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <motion.button
+          className={`w-full ${
+            isAdding
+              ? 'bg-blue-400'
+              : itemInCart
+                ? 'bg-green-600 hover:bg-green-700'
+                : 'bg-blue-600 hover:bg-blue-700'
+          } text-white py-2 px-4 rounded-full font-medium shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2`}
+          onClick={handleAddToCart}
+          whileTap={{ scale: 0.95 }}
+          disabled={!product.inStock || isAdding}
+        >
+          {isAdding ? (
+            <>
+              <motion.div
+                className="w-5 h-5 border-3 border-white border-t-transparent rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              <span>Adding...</span>
+            </>
+          ) : itemInCart ? (
+            <>
+              <span>In Cart ({itemInCart.quantity})</span>
+              <span>+</span>
+            </>
+          ) : product.inStock ? (
+            'Add to Cart'
+          ) : (
+            'Out of Stock'
+          )}
+        </motion.button>
+      </div>
+
+      {/* Wishlist Button */}
       <motion.button
         className="absolute top-4 right-4 p-2 rounded-full bg-white/90 backdrop-blur-sm shadow-lg z-10"
         whileHover={{ scale: 1.1 }}

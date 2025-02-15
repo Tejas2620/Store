@@ -1,62 +1,56 @@
-export const mockProducts = [
+export const mockData = [
   {
     id: 1,
-    name: "Nike Air Jordan 1 High OG 'Chicago Lost & Found'",
+    name: "Nike Air Jordan 1 Retro High OG",
+    price: 170,
     description:
-      "A reimagined version of the classic 1985 colorway with a vintage aesthetic, featuring aged details and premium leather construction.",
-    price: 180,
-    image:
-      "https://i.pinimg.com/736x/1b/97/b8/1b97b89ffea370ebdce2237b78c53d60.jpg",
-    inStock: true,
-    isNew: true,
+      "The Air Jordan 1 High OG delivers classic style with premium materials and Air cushioning for lasting comfort.",
+    brand: "Nike",
     category: "Basketball",
-    specifications: {
-      Brand: "Nike",
-      Model: "Air Jordan 1",
-      Colorway: "Varsity Red/Black-White",
-      Material: "Premium Leather",
-      Release: "November 2022",
-      Style: "DZ5485-612",
+    image: "/images/products/jordan1.jpg",
+    stockQuantity: 15,
+    inStock: true,
+    features: {
+      material: "Premium leather upper",
+      comfort: "Air-Sole cushioning",
+      style: "High-top silhouette",
+      design: "Original colorway",
     },
   },
   {
     id: 2,
-    name: "Adidas Yeezy Boost 350 V2 'Beluga'",
+    name: "Nike Air Force 1 '07",
+    price: 100,
     description:
-      "Features a gray Primeknit upper with a bright orange streak running from heel to toe, complete with BOOST cushioning.",
-    price: 230,
-    image:
-      "https://i.pinimg.com/736x/b6/8b/65/b68b65e7dbd2fa6746662890f70d619b.jpg",
-    inStock: false,
-    isNew: false,
+      "The radiance lives on in the Nike Air Force 1 '07, the basketball original that puts a fresh spin on what you know best.",
+    brand: "Nike",
     category: "Lifestyle",
-    specifications: {
-      Brand: "Adidas",
-      Model: "Yeezy Boost 350 V2",
-      Colorway: "Beluga/Steel Grey",
-      Material: "Primeknit",
-      Cushioning: "Full-length BOOST",
-      Style: "BB1826",
+    image: "/images/products/airforce1.jpg",
+    stockQuantity: 25,
+    inStock: true,
+    features: {
+      material: "Full-grain leather",
+      comfort: "Foam midsole",
+      style: "Low-top design",
+      design: "Classic all-white",
     },
   },
   {
     id: 3,
-    name: "Travis Scott x Nike Air Jordan 1 Low 'Reverse Mocha'",
-    description:
-      "Features a brown and white color scheme with reverse swoosh design and Travis Scott's signature details.",
+    name: "Travis Scott x Air Jordan 1 Low OG",
     price: 150,
-    image:
-      "https://i.pinimg.com/736x/d1/3b/4c/d13b4cbb0ca8573988961a4cd3566a94.jpg",
-    inStock: true,
-    isNew: true,
+    description:
+      "Travis Scott's take on the iconic Air Jordan 1 Low features unique design elements and premium materials.",
+    brand: "Nike",
     category: "Collaboration",
-    specifications: {
-      Brand: "Nike",
-      Model: "Air Jordan 1 Low OG",
-      Colorway: "Sail/Dark Mocha",
-      Material: "Premium Suede/Leather",
-      Release: "July 2022",
-      Style: "DM7866-162",
+    image: "/images/products/travis.jpg",
+    stockQuantity: 0,
+    inStock: false,
+    features: {
+      material: "Premium suede and leather",
+      comfort: "Zoom Air cushioning",
+      style: "Low-top silhouette",
+      design: "Reverse Swoosh",
     },
   },
   {

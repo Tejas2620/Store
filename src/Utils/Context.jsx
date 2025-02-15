@@ -1,32 +1,38 @@
 import React, { createContext, useState, useEffect } from "react";
-import { mockProducts } from "./mockData";
+import { mockData } from "./mockData";
 
 export const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState(() => {
     const savedProducts = localStorage.getItem("products");
-    return savedProducts ? JSON.parse(savedProducts) : mockProducts;
+    return savedProducts ? JSON.parse(savedProducts) : mockData;
   });
 
   const [toast, setToast] = useState(null);
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
   useEffect(() => {
     localStorage.setItem("products", JSON.stringify(products));
   }, [products]);
 
-  const addProduct = (newProduct) => {
-    setProducts((prevProducts) => [...prevProducts, newProduct]);
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  const addProduct = (product) => {
+    setProducts([...products, product]);
   };
 
-  const deleteProduct = (productId) => {
-    setProducts((prevProducts) =>
-      prevProducts.filter((product) => product.id !== productId)
-    );
+  const deleteProduct = (id) => {
+    setProducts(products.filter((product) => product.id !== id));
   };
 
   const resetToMockProducts = () => {
-    setProducts(mockProducts);
+    setProducts(mockData);
   };
 
   const showToast = (message, type = "success") => {
@@ -34,16 +40,91 @@ export const ProductProvider = ({ children }) => {
     setTimeout(() => setToast(null), 3000);
   };
 
+  const addToCart = (product, quantity = 1) => {
+    if (!product.inStock) {
+      showToast("Product is out of stock", "error");
+      return;
+    }
+
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        const newQuantity = existingItem.quantity + quantity;
+        if (newQuantity > product.stockQuantity) {
+          showToast("Cannot add more than available stock", "error");
+          return prevCart;
+        }
+        return prevCart.map((item) =>
+          item.id === product.id ? { ...item, quantity: newQuantity } : item
+        );
+      }
+
+      showToast(`Added ${product.name} to cart`, "success");
+      return [...prevCart, { ...product, quantity }];
+    });
+  };
+
+  const removeFromCart = (productId) => {
+    setCart((prevCart) => {
+      const itemToRemove = prevCart.find((item) => item.id === productId);
+      if (itemToRemove) {
+        showToast(`Removed ${itemToRemove.name} from cart`, "success");
+      }
+      return prevCart.filter((item) => item.id !== productId);
+    });
+  };
+
+  const updateCartQuantity = (productId, quantity) => {
+    setCart((prevCart) => {
+      const product = products.find((p) => p.id === productId);
+
+      if (quantity > product.stockQuantity) {
+        showToast("Cannot exceed available stock", "error");
+        return prevCart;
+      }
+
+      return prevCart
+        .map((item) =>
+          item.id === productId
+            ? { ...item, quantity: Math.max(0, quantity) }
+            : item
+        )
+        .filter((item) => item.quantity > 0);
+    });
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    showToast("Cart cleared", "success");
+  };
+
+  const getCartTotal = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const getCartCount = () => {
+    return cart.reduce((count, item) => count + item.quantity, 0);
+  };
+
   return (
     <ProductContext.Provider
       value={{
         products,
+        setProducts,
         addProduct,
         deleteProduct,
         resetToMockProducts,
         toast,
         setToast,
         showToast,
+        cart,
+        addToCart,
+        removeFromCart,
+        updateCartQuantity,
+        clearCart,
+        getCartTotal,
+        getCartCount,
       }}
     >
       {children}

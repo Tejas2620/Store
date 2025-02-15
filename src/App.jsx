@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ProductContext, ProductProvider } from "./Utils/Context";
+import { WishlistProvider } from "./Utils/WishlistContext";
 import Home from "./Components/Home";
 import Details from "./Components/Details";
 import AddProduct from "./Components/AddProduct";
@@ -9,15 +10,15 @@ import ErrorBoundary from "./Components/ErrorBoundary";
 import { Toast } from "./Components/Toast";
 import { LoadingOverlay } from "./Components/LoadingOverlay";
 import { SEO } from "./Components/SEO";
-import { WishlistProvider } from "./Utils/WishlistContext";
 import { WishlistPage } from "./Components/Wishlist/WishlistPage";
 import { Navbar } from "./Components/Navigation/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 
-function App() {
+const App = () => {
   const { toast, showToast, setToast, resetToMockProducts, products } =
     useContext(ProductContext);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     // Initial loading animation
@@ -55,24 +56,36 @@ function App() {
         title="Welcome"
         description="Discover amazing products at great prices"
       />
-      <AnimatePresence>
-        {isLoading ? (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50"
-          >
-            <LoadingOverlay />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
+      <ProductProvider>
+        <WishlistProvider>
+          <div className="min-h-screen">
+            <Navbar />
+            <main className="pt-16">
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/details/:id" element={<Details />} />
+                  <Route path="/add-product" element={<AddProduct />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/wishlist" element={<WishlistPage />} />
+                </Routes>
+              </AnimatePresence>
+            </main>
+          </div>
+
+          {isLoading && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50"
+            >
+              <LoadingOverlay />
+            </motion.div>
+          )}
+
+          <AnimatePresence>
             {toast && (
               <Toast
                 message={toast.message}
@@ -80,25 +93,11 @@ function App() {
                 onClose={() => setToast(null)}
               />
             )}
-            <ProductProvider>
-              <WishlistProvider>
-                <div className="min-h-screen pt-16">
-                  <Navbar />
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/details/:id" element={<Details />} />
-                    <Route path="/add-product" element={<AddProduct />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/wishlist" element={<WishlistPage />} />
-                  </Routes>
-                </div>
-              </WishlistProvider>
-            </ProductProvider>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </AnimatePresence>
+        </WishlistProvider>
+      </ProductProvider>
     </ErrorBoundary>
   );
-}
+};
 
 export default App;
