@@ -122,51 +122,101 @@ function Details() {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row w-full max-w-6xl h-[700px] transform hover:scale-[1.01] transition-all duration-500">
           {/* Image Section */}
           <div className="w-full md:w-1/2 relative h-full bg-gray-100 overflow-hidden group">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 opacity-50" />
+
+            {/* Main Image with Enhanced Animation */}
             <motion.img
               src={product.image}
               alt={product.name}
-              className={`w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110 ${
-                imageLoaded ? "opacity-100" : "opacity-0"
-              }`}
+              className={`w-full h-full object-cover object-center transition-all duration-700
+                group-hover:scale-110 group-hover:rotate-1 ${
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                }`}
               onLoad={() => setImageLoaded(true)}
+              initial={{ scale: 1.1, opacity: 0 }}
+              animate={{ scale: 1, opacity: imageLoaded ? 1 : 0 }}
+              transition={{ duration: 0.5 }}
             />
 
-            {/* Subtle Gradient Overlay */}
-            <motion.div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
-
-            {/* Price Tag - Top Left */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg transform -translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
-            >
-              <span className="text-blue-600 font-bold text-lg">
-                ${product.price}
-              </span>
+            {/* Subtle Gradient Overlay with Shimmer Effect */}
+            <motion.div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 animate-shimmer" />
             </motion.div>
 
-            {/* Model Info - Bottom */}
-            <motion.div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-full group-hover:translate-y-0 transition-all duration-500">
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+            {/* Price Tag with Enhanced Animation */}
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg
+                transform -translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0
+                transition-all duration-500 hover:bg-white hover:shadow-xl"
+            >
+              <motion.span
+                className="text-blue-600 font-bold text-lg flex items-center"
+                whileHover={{ scale: 1.05 }}
+              >
+                <span className="text-blue-400 text-sm mr-1">$</span>
+                {product.price}
+              </motion.span>
+            </motion.div>
+
+            {/* Model Info with Glass Effect */}
+            <motion.div
+              className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-full
+                group-hover:translate-y-0 transition-all duration-500 ease-out"
+            >
+              <div
+                className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg
+                border border-white/20 hover:bg-white/95 transition-colors duration-300"
+              >
                 <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-gray-500 text-sm">Model</span>
-                    <h3 className="text-gray-800 font-bold">
+                  <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <span className="text-gray-500 text-sm font-medium">
+                      Model
+                    </span>
+                    <h3
+                      className="text-gray-800 font-bold bg-gradient-to-r from-blue-600 to-indigo-600
+                      bg-clip-text text-transparent"
+                    >
                       {product.specifications.Model}
                     </h3>
-                  </div>
+                  </motion.div>
                   {product.inStock ? (
-                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <motion.span
+                      className="bg-green-500 text-white px-4 py-1.5 rounded-full text-sm font-medium
+                        shadow-lg shadow-green-500/20 flex items-center gap-1.5"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
                       In Stock
-                    </span>
+                    </motion.span>
                   ) : (
-                    <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <motion.span
+                      className="bg-red-500 text-white px-4 py-1.5 rounded-full text-sm font-medium
+                        shadow-lg shadow-red-500/20"
+                      whileHover={{ scale: 1.05 }}
+                    >
                       Sold Out
-                    </span>
+                    </motion.span>
                   )}
                 </div>
               </div>
             </motion.div>
+
+            {/* Corner Accents */}
+            <div
+              className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0
+              group-hover:opacity-100 transition-opacity duration-500 rounded-br-3xl"
+            />
+            <div
+              className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-indigo-500/10 to-transparent
+              opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-tl-3xl"
+            />
           </div>
 
           {/* Content Section */}
