@@ -36,6 +36,8 @@ export const Sidebar = ({
   onCategoryClick,
   searchQuery,
   onSearch,
+  sortBy,
+  onSort
 }) => {
   return (
     <motion.div
@@ -69,6 +71,25 @@ export const Sidebar = ({
             />
           </svg>
         </div>
+      </motion.div>
+
+      {/* Sort Section */}
+      <motion.div variants={itemVariants} className="mb-8">
+        <h2 className={`${typography.heading3} text-gray-800 mb-4`}>Sort By</h2>
+        <select
+          value={sortBy}
+          onChange={onSort}
+          className={`${typography.body2} w-full px-4 py-2.5 rounded-xl border border-gray-200
+            focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none
+            bg-gradient-to-r from-gray-50 to-gray-100 cursor-pointer`}
+        >
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="priceAsc">Price: Low to High</option>
+          <option value="priceDesc">Price: High to Low</option>
+          <option value="nameAsc">Name: A to Z</option>
+          <option value="nameDesc">Name: Z to A</option>
+        </select>
       </motion.div>
 
       {/* Categories Section */}
